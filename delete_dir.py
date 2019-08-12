@@ -2,7 +2,7 @@
 import os
 
 path = 'E:\\college\\冯如杯\\冯如杯对抗攻击\\i\
-magedownload\\Tencent\\Data\\Home&Kitchen'
+magedownload\\Tencent\\Data_1\\Home&Kitchen'
 
 
 def delete_gap_dir(dir):

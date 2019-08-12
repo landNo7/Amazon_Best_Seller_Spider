@@ -6,7 +6,7 @@ import urllib
 import ast
 import re
 import os
-
+import math
 header = {
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,\
     image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
@@ -63,8 +63,7 @@ baking_header = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.\
     36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
 }
-amazon_url = 'https://www.amazon.com/Tovla-Knives-3-Piece-Nylon-Kitchen/dp/\
-B0751JFFYY/ref=zg_bs_2231407011_1?_encoding=UTF8&psc=1&refRID=8ZWBPPZFTS9S7HKE9CY2'
+amazon_url = 'https://www.amazon.com/dp/B07VYWRKJD/ref=twister_B07VSYP6V4?_encoding=UTF8&psc=1'
 
 stars_url = 'https://www.amazon.com/gp/customer-reviews/widgets/average-custo\
 mer-review/popover/ref=dpx_acr_pop_?asin=B0751JFFYY'
@@ -77,22 +76,54 @@ g-Supplies/zgbs/home-garden/2231407011/ref=zg_bs_nav_hg_2_3206325011'
 
 baking_url = 'https://www.amazon.com/Best-Sellers-Home-Kitchen-Kids-Baking-Supp\
 lies/zgbs/home-garden/2231407011/ref=zg_bs_nav_hg_2_3206325011'
-url = 'https://www.amazon.com/product-reviews/B00OKY8BOY'
+url = 'https://www.amazon.com/product-reviews/B07GYR8NGX/?sortBy=recent&pageNumber=96'
+search_url = 'https://www.amazon.com/s?k=iphone+x+case&lo=grid&page=2&qid=1565603710&ref=sr_pg_1'
 page = requests.session()
 page.headers = header
+print(math.ceil(90/10))
 # p = page.get(amazon_url)
-p = page.get(url=url)
+p = page.get(url=search_url)
 print(p.status_code)
 # print(p.url)
 html = etree.HTML(p.text)
-reviews_num = html.xpath('//*[@id="cm_cr-product_info"]/div/div[1]/div[2]/div/div/div[2]/div/span\
-        /text()')
-reviews_num = ['13,122,111']
-review_num = ''
-for num in reviews_num[0].split(','):
-    review_num += num
-if int(review_num) > 1000:
-    print(int(review_num))
+
+Sponsored = html.xpath('//*[@data-component-type="sp-sponsored-result"]//*[@class="a-link-normal a-text-normal"]')
+print(len(Sponsored))
+
+# next_page = html.xpath('//*[@class="a-last"]/a/@href')
+# print(next_page)
+
+# earliest_date = html.xpath('//*[@id="cm_cr-review_list"]/div[last()]/div/div/span/text()')
+# earliest_date = html.xpath('//*[@class="a-section review aok-relative"]/div/div/span/text()')
+# print(earliest_date[len(earliest_date) - 1])
+# asin = html.xpath('//*[@data-component-type="sp-sponsored-result"]/../../../*[contains(@class,"AdHolder")]\
+# /@data-asin')
+# asin = html.xpath('//*[@data-component-type="sp-sponsored-result"]/../../../*[@class="sg-col\
+# -4-of-24 sg-col-4-of-12 sg-col-4-of-36 s-result-item sg-col-4-of-28 sg-col-4-of-16 AdHolder\
+# sg-col sg-col-4-of-20 sg-col-4-of-32"]/@data-asin')
+# asin1 = html.xpath('//*[@data-component-type="sp-sponsored-result"]/../../@data-asin')
+# asin += asin1
+#
+# print(len(asin))
+# for ai in asin:
+#     print(ai)
+# //*[@id="a-autoid-13-announce"]
+# color_list = html.xpath('//*[@id="variation_color_name"]/ul/li/span/div/span/span/span/button')
+# print(color_list)
+Sponsored_link = html.xpath('//*[contains(@class,"AdHolder")]/@data-asin')
+print(len(Sponsored_link))
+# for str in Sponsored_link:
+#     print(str)
+# reviews_num = html.xpath('//*[@id="cm_cr-product_info"]/div/div[1]/div[2]/div/div/div[2]/div/span\
+#         /text()')
+# reviews_num = ['13,122,111']
+# print(len(Sponsored))
+
+# review_num = ''
+# for num in reviews_num[0].split(','):
+#     review_num += num
+# if int(review_num) > 1000:
+#     print(int(review_num))
 # print(html.xpath('//*[@class="a-meter 5star"]/@aria-label'))
 # print(html.xpath('//*[@id="cm_cr-product_info"]/div/div[1]/div[3]/span/a/span/text()'))
 # class_url = html.xpath('//*[@id="zg_browseRoot"]/ul/ul/ul/ul/li/a/@href')

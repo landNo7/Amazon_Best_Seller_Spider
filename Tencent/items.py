@@ -34,6 +34,7 @@ class TencentItem(scrapy.Item):
     product_stars = scrapy.Field()
     reviews_num = scrapy.Field()
     star_num = scrapy.Field()
-    # earliest_date = scrapy.Field()
+    reviews_url = scrapy.Field()
+    earliest_date = scrapy.Field()
 
 
