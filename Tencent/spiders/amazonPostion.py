@@ -7,7 +7,8 @@ from scrapy.exceptions import DropItem
 from Tencent.items import TencentItem
 from Tencent.Get_IPPool import GetIpThread
 import math
-
+# from scrapy import signals
+# from Tencent.Tencent.pipelines import TencentPipeline.workbook_close
 error_report = '.\\Data\\error_report'
 file_dir = '.\\Data'
 search_key = 'Home&Kitchen'
@@ -223,3 +224,13 @@ class AmazonSpider(scrapy.Spider):
         else:
             item['earliest_date'] = earliest_date_list[len(earliest_date_list) - 1]
             yield item
+    #
+    # @classmethod
+    # def from_crawler(cls, crawler, *args, **kwargs):
+    #     spider = super(AmazonSpider, cls).from_crawler(crawler, *args, **kwargs)
+    #     crawler.signals.connect(spider.spider_closed, signal=signals.spider_closed)
+    #     return spider
+    #
+    # def spider_closed(self, spider):
+    #     spider.logger.info('Spider closed: %s', spider.name)
+

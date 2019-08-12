@@ -48,6 +48,9 @@ class TencentPipeline(object):
             with open(path, 'a+') as err:
                 err.write(str(item['product_asin']) + '\n')
             raise DropItem('Not_stars at %s' % item['product_asin'])
+
+    def close_spider(self, spider):
+        self.workbook.close()
     # def process_item(self, item, spider):
     #     if item['star_num'] or item['star_num'] == 0.0:
     #         if item['star_num'] < self.star_num_limit and item['product_stars'] >= self.star_limit:
