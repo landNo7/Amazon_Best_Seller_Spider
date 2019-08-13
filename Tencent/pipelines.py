@@ -9,6 +9,9 @@ import os
 import requests
 from scrapy.exceptions import DropItem
 import xlsxwriter
+from Tencent.spiders.amazonPostion import search_key
+from Tencent.spiders.amazonPostion import file_dir
+from Tencent.spiders.amazonPostion import error_report as er
 
 
 class TencentPipeline(object):
@@ -16,10 +19,10 @@ class TencentPipeline(object):
     min_price = 10
     star_num_limit = 1000
     star_limit = 4.3
-    error_report = '.\\Data\\error_report'
+    error_report = er
 
     def __init__(self):
-        self.workbook = xlsxwriter.Workbook(os.path.join(self.error_report, 'data.xlsx'))  # 创建一个excel文件
+        self.workbook = xlsxwriter.Workbook(os.path.join(file_dir, '{name}.xlsx'.format(name=search_key)))  # 创建一个excel文件
         self.worksheet = self.workbook.add_worksheet(u'sheet1')  # 在文件中创建一个名为TEST的sheet,不加名字默认为sheet1
         title_list = ['title', 'url', 'price', 'stars', 'reviews_num', 'star_num', 'earliest_date']
         self.worksheet.write_row(0, 0, title_list)
@@ -83,7 +86,8 @@ class TencentPipeline(object):
     #         else:
     #             path = os.path.join(self.error_report, 'Exceed.txt')
     #             with open(path, 'a+') as err:
-    #                 err.write(str(item['product_asin']) + ' ' + str(item['star_num']) + ' ' + str(item['product_stars']) + '\n')
+    #                 err.write(str(item['product_asin']) + ' ' + str(item['star_num']) + ' ' + str(item['pro\
+    #                 duct_stars']) + '\n')
     #             raise DropItem('Exceed the limit %s' % item['product_asin'])
     #     else:
     #         path = os.path.join(self.error_report, 'Not_stars.txt')
@@ -93,7 +97,8 @@ class TencentPipeline(object):
     #
     # def stars_limit(self, item):
     #     if item['star_num'] < self.star_num_limit and item['product_stars'] >= self.star_limit:
-    #         print('item num is {num},item star is {star}'.format(num=str(item['star_num']), star=str(item['product_stars'])))
+    #         print('item num is {num},item star is {star}'.format(num=str(item['star_num']), star=str(item['p\
+    #         roduct_stars'])))
     #         return 1
     #     return 0
     #

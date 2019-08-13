@@ -18,14 +18,15 @@ class SponsoredClick(object):
         self.driver.get(url)
 
     def sponsored_click(self):
-        search_box = driver.find_elements_by_xpath('//*[@data-component-type="sp-sponsored-result"]//*\
+        search_box = self.driver.find_elements_by_xpath('//*[@data-component-type="sp-sponsored-result"]//*\
         [@class="a-link-normal a-text-normal"]')
         for i in range(0, len(search_box)):
-            links = driver.find_elements_by_xpath('//*[@data-component-type="sp-sponsored-result"]//*\
+            links = self.driver.find_elements_by_xpath('//*[@data-component-type="sp-sponsored-result"]//*\
             [@class="a-link-normal a-text-normal"]')
-            asin_list = driver.find_elements_by_xpath('//*[contains(@class,"AdHolder")]')
-            if asin == asin_list[i].get_attribute('data-asin'):
-                self.onclick(links[i])
+            asin_list = self.driver.find_elements_by_xpath('//*[contains(@class,"AdHolder")]')
+            if self.asin == asin_list[i].get_attribute('data-asin'):
+                links[i].click()
+                self.random_click()
                 break
             else:
                 continue
@@ -36,9 +37,19 @@ class SponsoredClick(object):
             self.next_page += 1
             self.sponsored_click()
 
-    def onclick(self, link):
-        link.click()
-        for button in driver.find_elements_by_xpath('//*[@id="variation_color_name"]/ul/li/span\
+    def random_click(self):
+        mode = random.randint(1, 4)
+        if mode == 1:
+            self.click_mode_1()
+        elif mode == 2:
+            self.click_mode_2()
+        elif mode == 3:
+            self.click_mode_3()
+        else:
+            self.click_mode_4()
+
+    def click_mode_1(self):
+        for button in self.driver.find_elements_by_xpath('//*[@id="variation_color_name"]/ul/li/span\
                         /div/span/span/span/button'):
             try:
                 button.click()
@@ -46,19 +57,29 @@ class SponsoredClick(object):
             except:
                 continue
         for j in range(0, 3):
-            driver.execute_script("window.scrollBy(0,{num})".format(num=random.randint(500, 1000)))
+            self.driver.execute_script("window.scrollBy(0,{num})".format(num=random.randint(500, 1000)))
             time.sleep(1 + random.random())
 
         time.sleep(3)
         self.click_flag = 1
         self.driver.back()
 
+    def click_mode_2(self):
+
+        return
+
+    def click_mode_3(self):
+        return
+
+    def click_mode_4(self):
+        return
+
 
 if __name__ == '__main__':
-    url = 'https://www.amazon.com/s?k=iphone+x+case&ref=nb_sb_noss_1'
-    driver = webdriver.Chrome('G:\\迅雷下载\\chromedriver.exe')
-    asin = 'B07GBJ9ZYM'
-    next_limit = 10
-    SC = SponsoredClick(url, next_limit, asin, driver)
+    _url = 'https://www.amazon.com/s?k=iphone+x+case&ref=nb_sb_noss_1'
+    _driver = webdriver.Chrome('G:\\迅雷下载\\chromedriver.exe')
+    _asin = 'B07GBJ9ZYM'
+    _next_limit = 10
+    SC = SponsoredClick(_url, _next_limit, _asin, _driver)
     SC.sponsored_click()
-    driver.quit()
+    _driver.quit()
