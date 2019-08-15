@@ -8,6 +8,7 @@ from Tencent.items import TencentItem, UrlItem
 from Tencent.get_url_list import GetUrl
 # from scrapy_redis_bloomfilter.spiders import RedisSpider
 from scrapy_redis.spiders import RedisSpider
+from scrapy.exceptions import DropItem
 
 error_report = '.\\Data\\error_report'
 file_dir = '.\\Data'
@@ -24,8 +25,7 @@ url_start_depth = 2
 crawl_depth = crawl_depth - url_start_depth - 1
 is_full_page = 1
 url_list = [
-    'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Bar-Tools-Drinkware/zgbs/kitchen/289728/\
-    ref=zg_bs_nav_k_1_k',
+    'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Bar-Tools-Drinkware/zgbs/kitchen/289728/ref=zg_bs_nav_k_1_k',
     'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Wine-Accessories/zgbs/kitchen/13299291/\
     ref=zg_bs_nav_k_1_k',
     'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Utensils-Gadgets/zgbs/kitchen/289754/\
@@ -57,7 +57,7 @@ get_ip_url = 'http://api.ip.data5u.com/dynamic/get.html?order=e6913d3978399fbeba
 Thread_sleep_time = 5.5
 
 
-class AmazonSpider(scrapy.Spider):
+class AmazonSpider(RedisSpider):
     name = 'amazonSpider'
     redis_key = "amazonspider:start_urls"
     custom_settings = {
@@ -106,7 +106,7 @@ class AmazonSpider(scrapy.Spider):
         elif current_depth == crawl_depth:
             level_url_list = self.double_page(level_url_list)
             for i in range(0, len(level_url_list)):
-                item = self.meta_to_item(level_title=meta_1+'/'+re.sub(r_str, "_", level_title_list[int(i/2)]),
+                item = self.meta_to_item(level_title=meta_1['level_title']+'/'+re.sub(r_str, "_", level_title_list[int(i/2)]),
                                          level_url=level_url_list[i])
                 items.append(item)
             for item in items:
@@ -114,7 +114,7 @@ class AmazonSpider(scrapy.Spider):
         # 当前分类未到指定深度
         else:
             for i in range(0, len(level_url_list)):
-                item = self.meta_to_item(level_title=meta_1+'/'+re.sub(r_str, "_", level_title_list[i]),
+                item = self.meta_to_item(level_title=meta_1['level_title']+'/'+re.sub(r_str, "_", level_title_list[i]),
                                          level_url=level_url_list[i])
                 items.append(item)
             for item in items:
@@ -155,6 +155,8 @@ class AmazonSpider(scrapy.Spider):
                 # 评论最后一页url
                 url = item['reviews_url'] + '?sortBy=recent&pageNumber={num}'.format(num=page_num)
                 yield scrapy.Request(url=url, meta={'meta_4': item}, callback=self.earliest_review_pasre)
+            else:
+                print('Exceed the limit', ['product_stars'], item['reviews_num'])
         except IndexError:
             # 被Amazon拒绝掉的请求
             with open(failed_path, 'a+') as err:

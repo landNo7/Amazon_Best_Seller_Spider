@@ -15,13 +15,13 @@ SPIDER_MODULES = ['Tencent.spiders']
 NEWSPIDER_MODULE = 'Tencent.spiders'
 
 ITEM_PIPELINES = {
-   # 'Tencent.pipelines.TencentPipeline': 300,
-   'scrapy_redis.pipelines.RedisPipeline': 400,
+   'Tencent.pipelines.TencentPipeline': 300,
+   # 'scrapy_redis.pipelines.RedisPipeline': 400,
 }
 # Enables scheduling storing requests queue in redis.
 SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 SCHEDULER_PERSIST = True
-# SCHEDULER_FLUSH_ON_START = True
+SCHEDULER_FLUSH_ON_START = True
 # Ensure all spiders share same duplicates filter through redis.
 DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 # REDIS_START_URLS_AS_SET = True
@@ -85,7 +85,8 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 # ITEM_PIPELINES = {
-#    'Tencent.pipelines.TencentPipeline': 300,
+#    'amazonSpiders.pipelines.SinanewsPipeline': 300,
+#    # 'scrapy_redis.pipelines.RedisPipeline': 400,
 # }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -109,6 +110,6 @@ DOWNLOADER_MIDDLEWARES = {
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-# REDIS_HOST = "localhost"
-# REDIS_PORT = 6379
-# REDIS_ENCODING = "utf-8"
+REDIS_HOST = "localhost"
+REDIS_PORT = 6379
+REDIS_ENCODING = "utf-8"

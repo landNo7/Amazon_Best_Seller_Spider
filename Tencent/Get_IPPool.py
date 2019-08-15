@@ -23,9 +23,12 @@ class GetIpThread(threading.Thread):
         super(GetIpThread, self).__init__()
         self.sleep_time = sleep_time
         self.url = url
+        self.flag = False
 
     def run(self):
         while True:
+            if self.flag:
+                break
             page = requests.session()
             page.headers = header
             p = page.get(self.url)
@@ -50,20 +53,28 @@ class GetIpThread(threading.Thread):
                 print(request.status_code)
                 # print(request.text)
                 if request.status_code == 200:
-                    if r.len_ip() < 50:
+                    if IPPool.len_ip() < 50:
                         print('可用代理' + ip_port)
-                        r.add_ip(ip_port)
+                        IPPool.add_ip(ip_port)
                     else:
                         time.sleep(self.sleep_time*10)
-                        print('可用代理' + ip_port)
+                        print('可用代理1' + ip_port)
                         IPPool.add_ip(ip_port)
                 else:
                     print('不可用代理' + ip_port)
-            except requests.exceptions.ProxyError:
+            except:
                 print('不可用代理1' + ip_port)
             time.sleep(self.sleep_time)
+
+    def close(self):
+        self.flag = True
+        print('closed thread')
 
 
 if __name__ == '__main__':
     G = GetIpThread('http://api.ip.data5u.com/dynamic/get.html?order=e6913d3978399fbebaf814a6cb554bf8&sep=3', 5.5)
     G.start()
+    # time.sleep(5)
+    # G.close()
+    # G.join()
+

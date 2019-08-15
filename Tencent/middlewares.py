@@ -11,6 +11,8 @@ import random
 from Tencent.Get_IPPool import GetIpThread
 from Tencent.spiders.amazonPostion import get_ip_url, Thread_sleep_time
 
+thread_g = GetIpThread(get_ip_url, Thread_sleep_time)
+
 
 class TencentSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -58,8 +60,6 @@ class TencentSpiderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
-        thread_g = GetIpThread(get_ip_url, Thread_sleep_time)
-        thread_g.start()
 
 
 class TencentDownloaderMiddleware(object):
@@ -115,13 +115,15 @@ class TencentDownloaderMiddleware(object):
         # - return a Response object: stops process_exception() chain
         # - return a Request object: stops process_exception() chain
         # response异常时更换ip
-        ip = random.choice(IPPool.app_ip())
+        ip = random.choice(IPPool.rem_ip())
         if ip:
+            print('proxy change to', ip)
             request.meta['proxy'] = ip
         pass
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+        thread_g.start()
 
     user_agent_list = [# Opera
         "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 \

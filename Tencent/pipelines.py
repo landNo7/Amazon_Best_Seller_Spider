@@ -12,6 +12,7 @@ import xlsxwriter
 from Tencent.spiders.amazonPostion import search_key
 from Tencent.spiders.amazonPostion import file_dir
 from Tencent.spiders.amazonPostion import error_report as er
+from Tencent.middlewares import thread_g
 
 
 class TencentPipeline(object):
@@ -54,6 +55,8 @@ class TencentPipeline(object):
 
     def close_spider(self, spider):
         self.workbook.close()
+        thread_g.close()
+        thread_g.join()
     # def process_item(self, item, spider):
     #     if item['star_num'] or item['star_num'] == 0.0:
     #         if item['star_num'] < self.star_num_limit and item['product_stars'] >= self.star_limit:

@@ -25,26 +25,25 @@ _header = {
              like Gecko) Chrome/76.0.3809.100 Safari/537.36',
 }
 # print(meta_to_item(primary_title='ddd', primary_url='dss'))
-# try:
-#     pass
-# url = 'https://www.amazon.com'
-# ip_port = IPPool.get_url()
-# proxies = {"https": ip_port}
-# print(ip_port)
-# requests.packages.urllib3.disable_warnings()
-# s = requests.session()
-# s.keep_alive = False
-# request = s.get(url, headers=_header, proxies=proxies)
-# print(request.status_code)
-# # print(request.text)
-# if request.status_code == 200:
-#     print('可用代理' + ip_port)
-# else:
-#     print('不可用代理' + ip_port)
-# except requests.exceptions.ProxyError:
-#     print('不可用代理1' + ip_port)
+try:
+    url = 'https://www.amazon.com'
+    ip_port = IPPool.rem_ip()
+    proxies = {"https": ip_port}
+    print(ip_port)
+    requests.packages.urllib3.disable_warnings()
+    s = requests.session()
+    s.keep_alive = False
+    request = s.get(url, headers=_header, proxies=proxies)
+    print(request.status_code)
+    # print(request.text)
+    if request.status_code == 200:
+        print('可用代理' + ip_port)
+    else:
+        print('不可用代理' + ip_port)
+except requests.exceptions.ProxyError:
+    print('不可用代理1' + ip_port)
 
-List = [0, 1, 2, 3, 4]
-for i in range(0, len(List)):
-    List.append(i+5)
-    print(i)
+# List = [0, 1, 2, 3, 4]
+# for i in range(0, len(List)):
+#     List.append(i+5)
+#     print(i)
