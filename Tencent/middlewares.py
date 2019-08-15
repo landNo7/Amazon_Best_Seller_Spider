@@ -4,9 +4,12 @@
 #
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-from Tencent.IPPool import ip_pool
+# from Tencent.IPPool import r
+import Tencent.IPPool as r
 from scrapy import signals
 import random
+from Tencent.Get_IPPool import GetIpThread
+from Tencent.spiders.amazonPostion import get_ip_url, Thread_sleep_time
 
 
 class TencentSpiderMiddleware(object):
@@ -55,6 +58,8 @@ class TencentSpiderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+        thread_g = GetIpThread(get_ip_url, Thread_sleep_time)
+        thread_g.start()
 
 
 class TencentDownloaderMiddleware(object):
@@ -95,6 +100,10 @@ class TencentDownloaderMiddleware(object):
         # - return a Response object
         # - return a Request object
         # - or raise IgnoreRequest
+        if response.status != 200:
+            proxy = r.app_ip()
+            request.meta['proxy'] = proxy
+            return request
         return response
 
     def process_exception(self, request, exception, spider):
@@ -105,6 +114,10 @@ class TencentDownloaderMiddleware(object):
         # - return None: continue processing this exception
         # - return a Response object: stops process_exception() chain
         # - return a Request object: stops process_exception() chain
+        # response异常时更换ip
+        ip = random.choice(IPPool.app_ip())
+        if ip:
+            request.meta['proxy'] = ip
         pass
 
     def spider_opened(self, spider):

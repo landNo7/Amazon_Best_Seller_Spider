@@ -25,7 +25,7 @@ class GetUrl(object):
             self.current_depth = 0
         else:
             self.current_depth = _current_depth
-        self.xpath_start = '//*[@id="zg_browseRoot"]/ul/ul/'
+        self.xpath_start = '//*[@id="zg_browseRoot"]/ul/'
         self.xpath_plus = 'ul/'
         self.xpath_end = 'li/a/@href'
 
@@ -72,7 +72,7 @@ class GetUrl(object):
         self.xpath_start = self.xpath_start + _depth * self.xpath_plus
 
     def re_init(self):
-        self.xpath_start = '//*[@id="zg_browseRoot"]/ul/ul/'
+        self.xpath_start = '//*[@id="zg_browseRoot"]/ul/'
         self.xpath_plus = 'ul/'
         self.xpath_end = 'li/a/@href'
         self.current_depth = 0
@@ -85,19 +85,19 @@ class GetUrl(object):
 
 
 if __name__ == '__main__':
-    G = GetUrl(2, [], 1)
-    G.set_xpath_start(1)
+    G = GetUrl(1, [], 1)
+    G.set_xpath_start(2)
     crawl_list = [
         'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Bar-Tools-Drinkware/zgbs/kitchen/289728/\
-        ref=zg_bs_nav_k_1_k',
-        'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Wine-Accessories/zgbs/kitchen/13299291/\
-        ref=zg_bs_nav_k_1_k',
-        'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Utensils-Gadgets/zgbs/kitchen/289754/\
-        ref=zg_bs_nav_k_1_k',
-        'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Storage-Organization/zgbs/kitchen/510136/\
-        ref=zg_bs_nav_k_1_k',
-        'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Entertaining/zgbs/kitchen/13162311/\
         ref=zg_bs_nav_k_1_k'
+        # 'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Wine-Accessories/zgbs/kitchen/13299291/\
+        # ref=zg_bs_nav_k_1_k',
+        # 'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Utensils-Gadgets/zgbs/kitchen/289754/\
+        # ref=zg_bs_nav_k_1_k',
+        # 'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Storage-Organization/zgbs/kitchen/510136/\
+        # ref=zg_bs_nav_k_1_k',
+        # 'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Entertaining/zgbs/kitchen/13162311/\
+        # ref=zg_bs_nav_k_1_k'
     ]
     for crawl_url in crawl_list:
         G.get_url(crawl_url)

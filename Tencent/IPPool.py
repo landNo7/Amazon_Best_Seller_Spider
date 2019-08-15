@@ -1,7 +1,7 @@
-
+import json
 import redis
 # import Requestdef
-r = redis.Redis(host='127.0.0.1', port=6379)  # host后的IP是需要连接的ip，本地是127.0.0.1或者localhost
+r = redis.Redis(host='localhost', port=6379)  # host后的IP是需要连接的ip，本地是127.0.0.1或者localhost
 
 
 # 主ip池
@@ -35,21 +35,15 @@ def app_ip():
     return i
 
 
+# 获取爬虫url
+def get_url():
+    url = r.lpop('amazonSpider:items')
+    url = json.loads(url)['url']
+    return url
+
+
 # 取出从最后一个开始
 def rem_ip():
     i = str(r.rpop('Iplist'), encoding='utf-8')
     return i
 
-
-# 检查主ip池
-# def act_db():
-#     for i in range(int(r.llen('Iplist')/2)):
-#         Requestdef.inspect_ip(rem_ip())
-#
-#
-# # 如果ip池数量少于25个 则填满
-# def act_lenip():
-#     if r.llen('Iplist') < 25:
-#         print('填ip')
-#         while r.llen('Iplist') <= 50:
-#             Requestdef.inspect_ip(app_ips())

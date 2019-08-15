@@ -15,12 +15,13 @@ SPIDER_MODULES = ['Tencent.spiders']
 NEWSPIDER_MODULE = 'Tencent.spiders'
 
 ITEM_PIPELINES = {
-   'Tencent.pipelines.TencentPipeline': 300,
-   # 'scrapy_redis.pipelines.RedisPipeline': 400,
+   # 'Tencent.pipelines.TencentPipeline': 300,
+   'scrapy_redis.pipelines.RedisPipeline': 400,
 }
 # Enables scheduling storing requests queue in redis.
 SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 SCHEDULER_PERSIST = True
+# SCHEDULER_FLUSH_ON_START = True
 # Ensure all spiders share same duplicates filter through redis.
 DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 # REDIS_START_URLS_AS_SET = True
