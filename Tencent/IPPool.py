@@ -1,47 +1,55 @@
-ip_pool = [
-    'https://163.204.247.95',
-    'https://120.83.106.176',
-    'https://123.169.34.211',
-    'https://60.13.42.213',
-    'https://113.120.32.166',
-    'https://112.87.68.202',
-    'https://112.87.70.205',
-    'https://182.34.32.168',
-    'https://113.121.22.252',
-    'https://58.253.154.234',
-    'https://60.13.42.22',
-    'https://58.253.156.135',
-    'https://113.121.21.238',
-    'https://112.87.71.76',
-    'https://182.35.87.108',
-    'https://120.83.103.241',
-    'https://112.85.164.249',
-    'https://42.238.91.64',
-    'https://120.83.103.28',
-    'https://27.43.185.64',
-    'https://182.35.80.164',
-    'https://182.35.82.172',
-    'https://112.85.131.42',
-    'https://163.204.245.201',
-    'https://60.13.42.5',
-    'https://60.13.42.91',
-    'https://163.204.242.60',
-    'https://112.85.128.170',
-    'https://163.204.241.33',
-    'https://163.204.241.226',
-    'https://113.120.35.221',
-    'https://163.204.240.180',
-    'https://222.94.151.2',
-    'https://120.83.105.175',
-    'https://120.83.97.10',
-    'https://182.35.82.192',
-    'https://182.35.87.203',
-    'https://112.85.149.113',
-    'https://223.241.118.106',
-    'https://60.13.42.109',
-    'https://113.121.23.228',
-    'https://27.43.190.247',
-    'https://182.35.85.13',
-    'https://112.85.130.152',
-    'https://183.166.96.213',
-]
+
+import redis
+# import Requestdef
+r = redis.Redis(host='127.0.0.1', port=6379)  # host后的IP是需要连接的ip，本地是127.0.0.1或者localhost
+
+
+# 主ip池
+def add_ip(ip):
+    r.lpush('Iplist', ip)
+
+
+# 备用ip池
+def add_ips(ip):
+    r.lpush('Iplists', ip)
+
+
+# 备用ip池第一个开始取出
+def app_ips():
+    i = str(r.lindex('Iplists', 1), encoding='utf-8')
+    r.lrem('Iplists', i, num=0)
+    return i
+
+
+def len_ips():
+    return r.llen('Iplists')
+
+
+def len_ip():
+    return r.llen('Iplist')
+
+
+# 第一个开始取出
+def app_ip():
+    i = str(r.lpop('Iplist'), encoding='utf-8')
+    return i
+
+
+# 取出从最后一个开始
+def rem_ip():
+    i = str(r.rpop('Iplist'), encoding='utf-8')
+    return i
+
+
+# 检查主ip池
+# def act_db():
+#     for i in range(int(r.llen('Iplist')/2)):
+#         Requestdef.inspect_ip(rem_ip())
+#
+#
+# # 如果ip池数量少于25个 则填满
+# def act_lenip():
+#     if r.llen('Iplist') < 25:
+#         print('填ip')
+#         while r.llen('Iplist') <= 50:
+#             Requestdef.inspect_ip(app_ips())
