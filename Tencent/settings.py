@@ -15,8 +15,8 @@ SPIDER_MODULES = ['Tencent.spiders']
 NEWSPIDER_MODULE = 'Tencent.spiders'
 
 ITEM_PIPELINES = {
-   'Tencent.pipelines.TencentPipeline': 300,
-   # 'scrapy_redis.pipelines.RedisPipeline': 400,
+   # 'Tencent.pipelines.TencentPipeline': 300,
+   'scrapy_redis.pipelines.RedisPipeline': 400,
 }
 # Enables scheduling storing requests queue in redis.
 SCHEDULER = "scrapy_redis.scheduler.Scheduler"
@@ -78,9 +78,13 @@ DOWNLOADER_MIDDLEWARES = {
 #     }
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
-# EXTENSIONS = {
-#    'scrapy.extensions.telnet.TelnetConsole': None,
-# }
+MYEXT_ENABLED = True      # 开启扩展
+IDLE_NUMBER = 2           # 配置空闲持续时间单位为 360个 ，一个时间单位为5s
+
+# 在 EXTENSIONS 配置，激活扩展
+EXTENSIONS = {
+   'Tencent.extensions.RedisSpiderSmartIdleClosedExtensions': 500,
+}
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html

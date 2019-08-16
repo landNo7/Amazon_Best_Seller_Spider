@@ -8,10 +8,6 @@
 import Tencent.IPPool as IPPool
 from scrapy import signals
 import random
-from Tencent.Get_IPPool import GetIpThread
-from Tencent.spiders.amazonPostion import get_ip_url, Thread_sleep_time
-
-thread_g = GetIpThread(get_ip_url, Thread_sleep_time)
 
 
 class TencentSpiderMiddleware(object):
@@ -106,8 +102,6 @@ class TencentDownloaderMiddleware(object):
                 print('proxy change to', proxy)
                 request.meta['proxy'] = proxy
                 return request
-        else:
-            print(request.meta['proxy'])
         return response
 
     def process_exception(self, request, exception, spider):
@@ -127,7 +121,6 @@ class TencentDownloaderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
-        thread_g.start()
 
     user_agent_list = [# Opera
         "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 \

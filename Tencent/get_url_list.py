@@ -89,9 +89,9 @@ if __name__ == '__main__':
     G.set_xpath_start(2)
     crawl_list = [
         'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Bar-Tools-Drinkware/zgbs/kitchen/289728/\
+        ref=zg_bs_nav_k_1_k',
+        'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Wine-Accessories/zgbs/kitchen/13299291/\
         ref=zg_bs_nav_k_1_k'
-        # 'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Wine-Accessories/zgbs/kitchen/13299291/\
-        # ref=zg_bs_nav_k_1_k',
         # 'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Utensils-Gadgets/zgbs/kitchen/289754/\
         # ref=zg_bs_nav_k_1_k',
         # 'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Storage-Organization/zgbs/kitchen/510136/\
