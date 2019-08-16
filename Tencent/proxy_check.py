@@ -27,7 +27,7 @@ _header = {
 # print(meta_to_item(primary_title='ddd', primary_url='dss'))
 try:
     url = 'https://www.amazon.com'
-    ip_port = IPPool.rem_ip()
+    ip_port = IPPool.app_ip()
     proxies = {"https": ip_port}
     print(ip_port)
     requests.packages.urllib3.disable_warnings()

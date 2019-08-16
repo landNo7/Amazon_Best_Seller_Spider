@@ -21,14 +21,14 @@ ITEM_PIPELINES = {
 # Enables scheduling storing requests queue in redis.
 SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 SCHEDULER_PERSIST = True
-SCHEDULER_FLUSH_ON_START = True
+# SCHEDULER_FLUSH_ON_START = True
 # Ensure all spiders share same duplicates filter through redis.
 DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 # REDIS_START_URLS_AS_SET = True
 COOKIES_ENABLED = False
 
 DOWNLOAD_DELAY = 1
-
+DOWNLOAD_TIMEOUT = 10
 # 支持随机下载延迟
 RANDOMIZE_DOWNLOAD_DELAY = True
 # Crawl responsibly by identifying yourself (and your website) on the user-agent

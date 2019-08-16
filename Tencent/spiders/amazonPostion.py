@@ -26,14 +26,10 @@ crawl_depth = crawl_depth - url_start_depth - 1
 is_full_page = 1
 url_list = [
     'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Bar-Tools-Drinkware/zgbs/kitchen/289728/ref=zg_bs_nav_k_1_k',
-    'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Wine-Accessories/zgbs/kitchen/13299291/\
-    ref=zg_bs_nav_k_1_k',
-    'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Utensils-Gadgets/zgbs/kitchen/289754/\
-    ref=zg_bs_nav_k_1_k',
-    'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Storage-Organization/zgbs/kitchen/510136/\
-    ref=zg_bs_nav_k_1_k',
-    'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Entertaining/zgbs/kitchen/13162311/\
-    ref=zg_bs_nav_k_1_k'
+    'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Wine-Accessories/zgbs/kitchen/13299291/ref=zg_bs_nav_k_1_k',
+    'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Utensils-Gadgets/zgbs/kitchen/289754/ref=zg_bs_nav_k_1_k',
+    'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Storage-Organization/zgbs/kitchen/510136/ref=zg_bs_nav_k_1_k',
+    'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Entertaining/zgbs/kitchen/13162311/ref=zg_bs_nav_k_1_k'
 ]
 title_ignore = []
 
@@ -147,7 +143,7 @@ class AmazonSpider(RedisSpider):
                 review_num += num
             item['reviews_num'] = int(review_num)
             # 提前过滤评分低于要求个评论数量超过要求的产品
-            if item['product_stars'] < star_limit or item['reviews_num'] > star_num_limit:
+            if item['product_stars'] >= star_limit or item['reviews_num'] < star_num_limit:
                 page_num = math.ceil(item['reviews_num'] / 10)
                 rate = (int(re.findall(r'\d+', product_5star[0])[0]) + int(re.findall(r'\d+', product_4star[0])[0])) / 100.0
                 item['product_price'] = product_price[0]
@@ -156,7 +152,7 @@ class AmazonSpider(RedisSpider):
                 url = item['reviews_url'] + '?sortBy=recent&pageNumber={num}'.format(num=page_num)
                 yield scrapy.Request(url=url, meta={'meta_4': item}, callback=self.earliest_review_pasre)
             else:
-                print('Exceed the limit', ['product_stars'], item['reviews_num'])
+                print('Exceed the limit', item['product_stars'], item['reviews_num'])
         except IndexError:
             # 被Amazon拒绝掉的请求
             with open(failed_path, 'a+') as err:
