@@ -50,8 +50,8 @@ Thread_sleep_time = 5.5
 
 
 class AmazonSpider(RedisSpider):
-    name = 'amazonSpider'
-    redis_key = "amazonspider:start_urls"
+    name = '_amazonSpider'
+    redis_key = "_amazonspider:start_urls"
     # start_urls = [
     #     'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Bar-Tools-Drinkware/zgbs/kitchen/289728/ref=zg_bs_nav_k_1_k',
     #     'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Wine-Accessories/zgbs/kitchen/13299291/ref=zg_bs_nav_k_1_k'
@@ -62,16 +62,23 @@ class AmazonSpider(RedisSpider):
     }
 
     def parse(self, response):
-        response.meta['max_retry_times'] = 1
+        response.meta['max_retry_times'] = 3
         if not os.path.exists(error_report):
             os.mkdir(error_report)
         items = []
+
         xpath = xpath_start + xpath_end
         parent_url_list = response.xpath(xpath + '@href').extract()
         parent_title_list = response.xpath(xpath + 'text()').extract()
+        parent_name = response.xpath('//*[@id="zg_browseRoot"]/ul/'+(url_start_depth-1) * xpath_plus + '\
+        li/span/text()').extract()
+        if parent_name:
+            parent_name = parent_name[0]
+        else:
+            parent_name = 'no name'
 
         for i in range(0, len(parent_url_list)):
-            item = self.meta_to_item(level_title=search_key + '/' + re.sub(r_str, "_", parent_title_list[i]),
+            item = self.meta_to_item(level_title=parent_name + '/' + re.sub(r_str, "_", parent_title_list[i]),
                                      level_url=parent_url_list[i])
             items.append(item)
         # 进入下一级分类

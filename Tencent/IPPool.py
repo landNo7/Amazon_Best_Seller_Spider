@@ -35,11 +35,11 @@ def app_ip():
     return i
 
 
-# 获取爬虫url
-def get_url():
-    url = r.lpop('amazonSpider:items')
-    url = json.loads(url)['url']
-    return url
+# 获取product item
+def get_item():
+    item = r.lpop('amazonSpider:items')
+    item = json.loads(item)
+    return item
 
 
 # 取出从最后一个开始

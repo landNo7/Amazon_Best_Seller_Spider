@@ -71,8 +71,8 @@ params = {
     'contextId': 'dpx',
     'asin': 'B0751JFFYY'
 }
-three_level_url = 'https://www.amazon.com/Best-Sellers-Home-Kitchen-Kids-Bakin\
-g-Supplies/zgbs/home-garden/2231407011/ref=zg_bs_nav_hg_2_3206325011'
+three_level_url = 'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Bar-Tools-Drinkware\
+/zgbs/kitchen/289728/ref=zg_bs_nav_k_1_k'
 
 baking_url = 'https://www.amazon.com/Best-Sellers-Home-Kitchen-Kids-Baking-Supp\
 lies/zgbs/home-garden/2231407011/ref=zg_bs_nav_hg_2_3206325011'
@@ -80,15 +80,23 @@ url = 'https://www.amazon.com/product-reviews/B07GYR8NGX/?sortBy=recent&pageNumb
 search_url = 'https://www.amazon.com/s?k=iphone+x+case&lo=grid&page=2&qid=1565603710&ref=sr_pg_1'
 page = requests.session()
 page.headers = header
-print(math.ceil(90/10))
+# print(math.ceil(90/10))
 # p = page.get(amazon_url)
-p = page.get(url=search_url)
+p = page.get(url=three_level_url)
 print(p.status_code)
 # print(p.url)
 html = etree.HTML(p.text)
-
-Sponsored = html.xpath('//*[@data-component-type="sp-sponsored-result"]//*[@class="a-link-normal a-text-normal"]')
-print(len(Sponsored))
+url_start_depth = 2
+xpath_plus = 'ul/'
+xpath_start = '//*[@id="zg_browseRoot"]/ul/' + url_start_depth * xpath_plus
+xpath_end = 'li/a/'
+parent_name = html.xpath('//*[@id="zg_browseRoot"]/ul/'+(url_start_depth-1) * xpath_plus + '\
+        li/span/text()')
+if parent_name:
+    parent_name = parent_name[0]
+else:
+    parent_name = 'no name'
+print(parent_name)
 
 # next_page = html.xpath('//*[@class="a-last"]/a/@href')
 # print(next_page)
