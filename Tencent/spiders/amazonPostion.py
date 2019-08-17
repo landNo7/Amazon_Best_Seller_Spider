@@ -10,8 +10,8 @@ from scrapy_redis.spiders import RedisSpider
 # 文件路径
 error_report = '.\\Data\\error_report'
 file_dir = '.\\Data'
-# 不同爬虫任务不同名称
-spider_name = ''
+# 不同爬虫任务不同名称,爬取不同url时需更换，否则爬取结果将混在一起
+spider_name = "lunch_bags"
 # 获取动态ip
 get_ip_url = ''
 # 获取时间间隔
@@ -30,7 +30,7 @@ CONCURRENT_REQUESTS_PER_DOMAIN = 5
 # 爬取至几级分类
 crawl_depth = 4
 # 输入的url的当前类级
-url_start_depth = 2
+url_start_depth = 4
 crawl_depth = crawl_depth - url_start_depth - 1
 
 if crawl_depth < 0:

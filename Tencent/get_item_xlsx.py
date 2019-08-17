@@ -4,8 +4,10 @@ import os
 
 file_dir = '.\\'
 file_name = 'test'
+key_name = "lunch_bags:items"
 num_limit = 1000
 star_limit = 4.3
+
 # 创建一个excel文件
 workbook = xlsxwriter.Workbook(os.path.join(file_dir, '{name}.xlsx'.format(name=file_name)))
 # 在文件中创建一个名为TEST的sheet,不加名字默认为sheet1
@@ -19,7 +21,7 @@ worksheet.set_column(6, 6, 20)
 row = 1
 
 try:
-    item = IPPool.get_item1()
+    item = IPPool.get_item1(key_name)
     while item:
         if item['star_num'] > num_limit or item['product_stars'] < star_limit:
             print(item)
@@ -28,7 +30,7 @@ try:
                     item['reviews_num'], item['star_num'], item['earliest_date'], item['level_title']]
             worksheet.write_row(row, 0, data)
             row += 1
-        item = IPPool.get_item1()
+        item = IPPool.get_item1(key_name)
 except:
     pass
 workbook.close()

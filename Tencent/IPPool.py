@@ -42,12 +42,13 @@ def get_item():
     return item
 
 
-def get_item1():
-    if r.llen('_amazonSpider:items') > 0:
-        item = r.lpop('_amazonSpider:items')
+def get_item1(key_name):
+    if r.llen(key_name) > 0:
+        item = r.lpop(key_name)
         item = json.loads(item)
         return item
     return None
+
 
 # 取出从最后一个开始
 def rem_ip():

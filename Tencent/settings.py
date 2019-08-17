@@ -66,7 +66,8 @@ CONCURRENT_REQUESTS_PER_IP = 16
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
    'Tencent.middlewares.TencentDownloaderMiddleware': 543,
-   'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None
+   'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+   'Tencent.middlewares.MyRetryMiddleware': 550
 }
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html

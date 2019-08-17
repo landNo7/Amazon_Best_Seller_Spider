@@ -10,6 +10,7 @@ from scrapy import signals
 import random
 import time
 from scrapy.downloadermiddlewares.retry import RetryMiddleware
+from scrapy.utils.response import response_status_message
 
 
 class TencentSpiderMiddleware(object):
@@ -98,20 +99,6 @@ class TencentDownloaderMiddleware(object):
         # - return a Response object
         # - return a Request object
         # - or raise IgnoreRequest
-        title = response.xpath('/html/head/title/text()').extract()
-        if title:
-            title = title[0]
-        else:
-            title = 'no thing happened'
-        if response.status != 200 or title == 'Robot Check':
-            while IPPool.len_ip() <= 0:
-                time.sleep(20)
-            proxy = IPPool.app_ip()
-            if proxy:
-                print('request', request.url, 'proxy change to', proxy, )
-                request.meta['proxy'] = proxy
-                # request.dont_filter = True
-                return request
         return response
 
     def process_exception(self, request, exception, spider):
@@ -199,3 +186,32 @@ class TencentDownloaderMiddleware(object):
         "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"
 
     ]
+
+
+class MyRetryMiddleware(RetryMiddleware):
+
+    def process_response(self, request, response, spider):
+        if request.meta.get('dont_retry', False):
+            return response
+        title = response.xpath('/html/head/title/text()').extract()
+        if title:
+            title = title[0]
+        else:
+            title = 'no thing happened'
+        if response.status != 200 or title == 'Robot Check':
+            while IPPool.len_ip() <= 0:
+                time.sleep(20)
+            proxy = IPPool.app_ip()
+            if proxy:
+                print('request', request.url, 'proxy change to', proxy, )
+                request.meta['proxy'] = proxy
+                return self._retry(request, title, spider) or response
+        if response.status in self.retry_http_codes:
+            reason = response_status_message(response.status)
+            return self._retry(request, reason, spider) or response
+        return response
+
+    def process_exception(self, request, exception, spider):
+        if isinstance(exception, self.EXCEPTIONS_TO_RETRY) \
+                and not request.meta.get('dont_retry', False):
+            return self._retry(request, exception, spider)
