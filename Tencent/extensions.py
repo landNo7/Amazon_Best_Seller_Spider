@@ -35,7 +35,7 @@ class RedisSpiderSmartIdleClosedExtensions(object):
 
         # get the number of items from settings
 
-        idle_number = crawler.settings.getint('IDLE_NUMBER', 12)
+        idle_number = crawler.settings.getint('IDLE_NUMBER', 120)
 
         # instantiate the extension object
 

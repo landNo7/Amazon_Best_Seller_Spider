@@ -14,21 +14,16 @@ BOT_NAME = 'Tencent'
 SPIDER_MODULES = ['Tencent.spiders']
 NEWSPIDER_MODULE = 'Tencent.spiders'
 
-ITEM_PIPELINES = {
-   # 'Tencent.pipelines.TencentPipeline': 300,
-   # 'scrapy_redis.pipelines.RedisPipeline': 400,
-   'Tencent.pipelines.RedisPipeline': 500
-}
 # Enables scheduling storing requests queue in redis.
 SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 SCHEDULER_PERSIST = True
 # SCHEDULER_FLUSH_ON_START = True
 # Ensure all spiders share same duplicates filter through redis.
 DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+DUPEFILTER_DEBUG = True
 # REDIS_START_URLS_AS_SET = True
 COOKIES_ENABLED = False
 
-DOWNLOAD_DELAY = 1
 DOWNLOAD_TIMEOUT = 10
 # 支持随机下载延迟
 RANDOMIZE_DOWNLOAD_DELAY = True
@@ -39,16 +34,16 @@ RANDOMIZE_DOWNLOAD_DELAY = True
 ROBOTSTXT_OBEY = False
 #
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-# CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 32
 #
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-# DOWNLOAD_DELAY = 0.5
+DOWNLOAD_DELAY = 0.25
 # The download delay setting will honor only one of:
-# CONCURRENT_REQUESTS_PER_DOMAIN = 16
-# CONCURRENT_REQUESTS_PER_IP = 16
-#
+CONCURRENT_REQUESTS_PER_DOMAIN = 16
+CONCURRENT_REQUESTS_PER_IP = 16
+
 # Disable cookies (enabled by default)
 # COOKIES_ENABLED = False
 #
@@ -73,14 +68,10 @@ DOWNLOADER_MIDDLEWARES = {
    'Tencent.middlewares.TencentDownloaderMiddleware': 543,
    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None
 }
-# DOWNLOADER_MIDDLEWARES = {
-#         'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
-#         'Tencent.rotate_useragent.RotateUserAgentMiddleware': 400
-#     }
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
 MYEXT_ENABLED = True      # 开启扩展
-IDLE_NUMBER = 12           # 配置空闲持续时间单位为 360个 ，一个时间单位为5s
+IDLE_NUMBER = 120           # 配置空闲持续时间单位为 360个 ，一个时间单位为5s
 
 # 在 EXTENSIONS 配置，激活扩展
 EXTENSIONS = {
@@ -89,18 +80,19 @@ EXTENSIONS = {
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#    'amazonSpiders.pipelines.SinanewsPipeline': 300,
-#    # 'scrapy_redis.pipelines.RedisPipeline': 400,
-# }
+ITEM_PIPELINES = {
+   # 'Tencent.pipelines.TencentPipeline': 300,
+   # 'scrapy_redis.pipelines.RedisPipeline': 400,
+   'Tencent.pipelines.RedisPipeline': 500
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
-# AUTOTHROTTLE_ENABLED = True
+AUTOTHROTTLE_ENABLED = True
 # The initial download delay
-# AUTOTHROTTLE_START_DELAY = 5
+AUTOTHROTTLE_START_DELAY = 1
 # The maximum download delay to be set in case of high latencies
-# AUTOTHROTTLE_MAX_DELAY = 60
+AUTOTHROTTLE_MAX_DELAY = 20
 # The average number of requests Scrapy should be sending in parallel to
 # each remote server
 # AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0

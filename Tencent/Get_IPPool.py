@@ -38,7 +38,10 @@ class GetIpThread(threading.Thread):
                 IPPool.add_ip(ip_port)
             else:
                 time.sleep(30)
-                IPPool.rem_ip()
+                try:
+                    IPPool.rem_ip()
+                except:
+                    pass
                 IPPool.add_ip(ip_port)
             # _header = {
             #             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng\

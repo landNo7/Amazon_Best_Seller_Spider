@@ -4,18 +4,17 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-from scrapy import signals
 import os
+import re
 import xlsxwriter
-from scrapy.exceptions import DropItem
-from Tencent.spiders.amazonPostion import file_dir, search_key, star_num_limit, star_limit
 from Tencent.spiders.amazonPostion import error_report as er
+from Tencent.spiders.amazonPostion import file_dir, star_num_limit, star_limit, price_min_limit
+from scrapy.exceptions import DropItem
 # from Tencent.middlewares import thread_g
 from scrapy.utils.misc import load_object
 from scrapy.utils.serialize import ScrapyJSONEncoder
-from twisted.internet.threads import deferToThread
-
 from scrapy_redis import connection, defaults
+from twisted.internet.threads import deferToThread
 
 default_serialize = ScrapyJSONEncoder().encode
 
@@ -28,7 +27,7 @@ class TencentPipeline(object):
         self.star_limit = star_limit
 
         # 创建一个excel文件
-        self.workbook = xlsxwriter.Workbook(os.path.join(file_dir, '{name}.xlsx'.format(name=search_key)))
+        self.workbook = xlsxwriter.Workbook(os.path.join(file_dir, '{name}.xlsx'.format(name='crawl')))
         # 在文件中创建一个名为TEST的sheet,不加名字默认为sheet1
         self.worksheet = self.workbook.add_worksheet(u'sheet1')
         title_list = ['title', 'url', 'price', 'stars', 'reviews_num', 'star_num', 'earliest_date']
@@ -115,7 +114,9 @@ class RedisPipeline(object):
     def process_item(self, item, spider):
         if item['star_num'] or item['star_num'] == 0.0:
             if item['star_num'] < star_num_limit and item['product_stars'] >= star_limit:
-                return deferToThread(self._process_item, item, spider)
+                price = float(re.findall(r'\d+.\d+', item['product_price'])[0])
+                if price > price_min_limit:
+                    return deferToThread(self._process_item, item, spider)
 
     def _process_item(self, item, spider):
         key = self.item_key(item, spider)

@@ -18,16 +18,17 @@ worksheet.set_column(2, 5, 10)
 worksheet.set_column(6, 6, 20)
 row = 1
 
-
-item = IPPool.get_item()
-while item:
-    if item['reviews_num'] > num_limit or item['product_stars'] < star_limit:
-        print(item)
-    else:
-        data = [item['product_name'], item['product_url'], item['product_price'], item['product_stars'],
-                item['reviews_num'], item['star_num'], item['earliest_date'], item['level_title']]
-        worksheet.write_row(row, 0, data)
-        row += 1
-    item = IPPool.get_item()
-
+try:
+    item = IPPool.get_item1()
+    while item:
+        if item['star_num'] > num_limit or item['product_stars'] < star_limit:
+            print(item)
+        else:
+            data = [item['product_name'], item['product_url'], item['product_price'], item['product_stars'],
+                    item['reviews_num'], item['star_num'], item['earliest_date'], item['level_title']]
+            worksheet.write_row(row, 0, data)
+            row += 1
+        item = IPPool.get_item1()
+except:
+    pass
 workbook.close()

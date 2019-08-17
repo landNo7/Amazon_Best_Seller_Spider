@@ -71,8 +71,7 @@ params = {
     'contextId': 'dpx',
     'asin': 'B0751JFFYY'
 }
-three_level_url = 'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Bar-Tools-Drinkware\
-/zgbs/kitchen/289728/ref=zg_bs_nav_k_1_k'
+three_level_url = 'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Reusable-Lunch-Bags/zgbs/kitchen/2287321011/ref=zg_bs_nav_k_3_8841480011'
 
 baking_url = 'https://www.amazon.com/Best-Sellers-Home-Kitchen-Kids-Baking-Supp\
 lies/zgbs/home-garden/2231407011/ref=zg_bs_nav_hg_2_3206325011'
@@ -86,7 +85,7 @@ p = page.get(url=three_level_url)
 print(p.status_code)
 # print(p.url)
 html = etree.HTML(p.text)
-url_start_depth = 2
+url_start_depth = 4
 xpath_plus = 'ul/'
 xpath_start = '//*[@id="zg_browseRoot"]/ul/' + url_start_depth * xpath_plus
 xpath_end = 'li/a/'

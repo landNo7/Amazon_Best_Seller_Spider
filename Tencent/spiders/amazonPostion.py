@@ -7,20 +7,34 @@ import re
 from Tencent.items import TencentItem, UrlItem
 from scrapy_redis.spiders import RedisSpider
 
+# 文件路径
 error_report = '.\\Data\\error_report'
 file_dir = '.\\Data'
-file_name = 'Home&Kitchen'
-search_key = 'Home&Kitchen'
-
+# 不同爬虫任务不同名称
+spider_name = ''
+# 获取动态ip
+get_ip_url = ''
+# 获取时间间隔
+Thread_sleep_time = 5.5
+# 好评数量不大于
 star_num_limit = 1000
+# 评分不小于
 star_limit = 4.3
-DOWNLOAD_DELAY = 0.3
-CONCURRENT_REQUESTS_PER_DOMAIN = 16
-
+# 价格不低于
+price_min_limit = 0
+# price_max_limit = 0
+# 爬取间隔
+DOWNLOAD_DELAY = 0.1
+# 爬取线程数
+CONCURRENT_REQUESTS_PER_DOMAIN = 5
+# 爬取至几级分类
 crawl_depth = 4
+# 输入的url的当前类级
 url_start_depth = 2
 crawl_depth = crawl_depth - url_start_depth - 1
-is_full_page = 1
+
+if crawl_depth < 0:
+    crawl_depth = 0
 url_list = [
     'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Bar-Tools-Drinkware/zgbs/kitchen/289728/ref=zg_bs_nav_k_1_k',
     'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Wine-Accessories/zgbs/kitchen/13299291/ref=zg_bs_nav_k_1_k',
@@ -28,14 +42,14 @@ url_list = [
     'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Storage-Organization/zgbs/kitchen/510136/ref=zg_bs_nav_k_1_k',
     'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Entertaining/zgbs/kitchen/13162311/ref=zg_bs_nav_k_1_k'
 ]
-title_ignore = []
 
+# Robot Check
 failed_path = os.path.join(error_report, "failed.txt")
-three_level_url_path = os.path.join(error_report, "Three_level_url.txt")
-url_path = os.path.join(error_report, "url.txt")
+# 拼接amazon产品链接用
 base_url = 'https://www.amazon.com'
+# 拼接amazon产品reviews链接用
 reviews_url = 'https://www.amazon.com/product-reviews/'
-crawl_url = 'https://www.amazon.com/Best-Sellers-Home-Kitchen/zgbs/home-garden/ref=zg_bs_nav_0'
+# 拼接url实现翻页
 next_page_url_end = '?_encoding=UTF8&pg=2'
 # 大类小类列表xpath
 xpath_plus = 'ul/'
@@ -43,19 +57,11 @@ xpath_start = '//*[@id="zg_browseRoot"]/ul/' + url_start_depth * xpath_plus
 xpath_end = 'li/a/'
 # 匹配非法字符
 r_str = r"[\/\\\:\'\*\?\"\<\>\|\n\r]"
-# 获取动态ip
-get_ip_url = 'http://api.ip.data5u.com/dynamic/get.html?order=e6913d3978399fbebaf814a6cb554bf8&sep=3'
-# 获取时间间隔
-Thread_sleep_time = 5.5
 
 
 class AmazonSpider(RedisSpider):
-    name = '_amazonSpider'
-    redis_key = "_amazonspider:start_urls"
-    # start_urls = [
-    #     'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Bar-Tools-Drinkware/zgbs/kitchen/289728/ref=zg_bs_nav_k_1_k',
-    #     'https://www.amazon.com/Best-Sellers-Kitchen-Dining-Wine-Accessories/zgbs/kitchen/13299291/ref=zg_bs_nav_k_1_k'
-    # ]
+    name = spider_name
+    redis_key = spider_name+":start_urls"
     custom_settings = {
         "DOWNLOAD_DELAY": DOWNLOAD_DELAY,
         "CONCURRENT_REQUESTS_PER_DOMAIN": CONCURRENT_REQUESTS_PER_DOMAIN
@@ -66,26 +72,38 @@ class AmazonSpider(RedisSpider):
         if not os.path.exists(error_report):
             os.mkdir(error_report)
         items = []
-
-        xpath = xpath_start + xpath_end
-        parent_url_list = response.xpath(xpath + '@href').extract()
-        parent_title_list = response.xpath(xpath + 'text()').extract()
-        parent_name = response.xpath('//*[@id="zg_browseRoot"]/ul/'+(url_start_depth-1) * xpath_plus + '\
-        li/span/text()').extract()
+        parent_name = response.xpath('//*[@id="zg_browseRoot"]/ul/' + (url_start_depth - 1) * xpath_plus + '\
+                    li/span/text()').extract()
         if parent_name:
             parent_name = parent_name[0]
         else:
             parent_name = 'no name'
+        if crawl_depth == 0:
+            # 前50产品
+            meta = TencentItem()
+            meta['level_title'] = parent_name
+            meta['level_url'] = response.url
+            items = self.max_depth(response, meta)
+            for item in items:
+                yield scrapy.Request(url=item['reviews_url'], meta={'meta_3': item}, callback=self.detail_parse)
+            # 爬取第二页
+            yield scrapy.Request(url=response.url + next_page_url_end,
+                                 meta={'meta_2': meta},
+                                 callback=self.rank_parse)
+        else:
+            xpath = xpath_start + xpath_end
+            parent_url_list = response.xpath(xpath + '@href').extract()
+            parent_title_list = response.xpath(xpath + 'text()').extract()
 
-        for i in range(0, len(parent_url_list)):
-            item = self.meta_to_item(level_title=parent_name + '/' + re.sub(r_str, "_", parent_title_list[i]),
-                                     level_url=parent_url_list[i])
-            items.append(item)
-        # 进入下一级分类
-        for item in items:
-            yield scrapy.Request(url=item['level_url'],
-                                 meta={'meta_1': item, 'current_depth': 1},
-                                 callback=self.next_parse)
+            for i in range(0, len(parent_url_list)):
+                item = self.meta_to_item(level_title=parent_name + '/' + re.sub(r_str, "_", parent_title_list[i]),
+                                         level_url=parent_url_list[i])
+                items.append(item)
+            # 进入下一级分类
+            for item in items:
+                yield scrapy.Request(url=item['level_url'],
+                                     meta={'meta_1': item, 'current_depth': 1},
+                                     callback=self.next_parse)
 
     def next_parse(self, response):
         # 提取出传过来的item
@@ -153,22 +171,34 @@ class AmazonSpider(RedisSpider):
             for num in reviews_num[0].split(','):
                 review_num += num
             item['reviews_num'] = int(review_num)
+            item['product_price'] = product_price[0]
+            price = float(re.findall(r'\d+.\d+', item['product_price'])[0])
             # 提前过滤评分低于要求个评论数量超过要求的产品
-            if item['product_stars'] >= star_limit or item['reviews_num'] < star_num_limit:
+            if item['product_stars'] >= star_limit and item['reviews_num'] < star_num_limit and \
+                    price > price_min_limit:
                 page_num = math.ceil(item['reviews_num'] / 10)
-                rate = (int(re.findall(r'\d+', product_5star[0])[0]) + int(
-                    re.findall(r'\d+', product_4star[0])[0])) / 100.0
-                item['product_price'] = product_price[0]
+                if product_5star:
+                    star5 = int(re.findall(r'\d+', product_5star[0])[0])
+                else:
+                    star5 = 0
+                if product_4star:
+                    star4 = int(re.findall(r'\d+', product_4star[0])[0])
+                else:
+                    star4 = 0
+                rate = (star4 + star5) / 100.0
                 item['star_num'] = round(item['reviews_num'] * rate, 2)
                 # 评论最后一页url
                 url = item['reviews_url'] + '?sortBy=recent&pageNumber={num}'.format(num=page_num)
                 yield scrapy.Request(url=url, meta={'meta_4': item}, callback=self.earliest_review_pasre)
             else:
-                print('Exceed the limit', item['product_stars'], item['reviews_num'])
+                print('Exceed the limit', item['product_stars'], item['reviews_num'], price)
         except IndexError:
-            # 被Amazon拒绝掉的请求
-            with open(failed_path, 'a+') as err:
-                err.write(str(item['product_asin']) + '\n')
+            # Robot Check
+            print('robot html')
+            # with open(failed_path, 'a+') as err:
+            #     err.write(str(item['product_asin']) + '\n')
+            # with open(os.path.join(error_report, item['product_asin'] + '.txt'), 'a+') as err:
+            #     err.write(response.body.decode('utf-8'))
 
     # 爬取评价页最后一页的最后一个评价的时间
     def earliest_review_pasre(self, response):
@@ -229,8 +259,8 @@ class AmazonSpider(RedisSpider):
                                          _reviews_url=url)
                 items.append(item)
             except IndexError:
-                with open(url_path, 'a+') as err:
-                    err.write(base_url + product_url_list[i])
+                # Robot Check
+                pass
         return items
 
 # class AmazonUrlSpider(scrapy.Spider):

@@ -8,6 +8,8 @@
 import Tencent.IPPool as IPPool
 from scrapy import signals
 import random
+import time
+from scrapy.downloadermiddlewares.retry import RetryMiddleware
 
 
 class TencentSpiderMiddleware(object):
@@ -96,11 +98,19 @@ class TencentDownloaderMiddleware(object):
         # - return a Response object
         # - return a Request object
         # - or raise IgnoreRequest
-        if response.status != 200:
+        title = response.xpath('/html/head/title/text()').extract()
+        if title:
+            title = title[0]
+        else:
+            title = 'no thing happened'
+        if response.status != 200 or title == 'Robot Check':
+            while IPPool.len_ip() <= 0:
+                time.sleep(20)
             proxy = IPPool.app_ip()
             if proxy:
-                print('proxy change to', proxy)
+                print('request', request.url, 'proxy change to', proxy, )
                 request.meta['proxy'] = proxy
+                # request.dont_filter = True
                 return request
         return response
 
@@ -113,6 +123,8 @@ class TencentDownloaderMiddleware(object):
         # - return a Response object: stops process_exception() chain
         # - return a Request object: stops process_exception() chain
         # response异常时更换ip
+        while IPPool.len_ip() <= 0:
+            time.sleep(20)
         ip = IPPool.app_ip()
         if ip:
             print('proxy change to', ip)
