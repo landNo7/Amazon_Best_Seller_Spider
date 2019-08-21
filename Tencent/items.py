@@ -30,4 +30,10 @@ class TencentItem(scrapy.Item):
 
     earliest_date = scrapy.Field()
 
+    star_num_min_limit = scrapy.Field()
+    star_num_max_limit = scrapy.Field()
+    star_min_limit = scrapy.Field()
+    star_max_limit = scrapy.Field()
+    price_min_limit = scrapy.Field()
+    price_max_limit = scrapy.Field()
 

@@ -6,7 +6,9 @@ import time
 from scrapy import signals
 from scrapy.exceptions import NotConfigured
 from Tencent.Get_IPPool import GetIpThread
-from Tencent.spiders.amazonPostion import get_ip_url, Thread_sleep_time
+
+get_ip_url = ""
+Thread_sleep_time = 5.5
 
 thread_g = GetIpThread(get_ip_url, Thread_sleep_time)
 logger = logging.getLogger(__name__)

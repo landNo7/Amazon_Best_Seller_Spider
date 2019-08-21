@@ -17,7 +17,7 @@ NEWSPIDER_MODULE = 'Tencent.spiders'
 # Enables scheduling storing requests queue in redis.
 SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 SCHEDULER_PERSIST = True
-# SCHEDULER_FLUSH_ON_START = True
+# SCHEDULER_FLUSH_ON_START = gp.get_value("is_flush")
 # Ensure all spiders share same duplicates filter through redis.
 DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 DUPEFILTER_DEBUG = True
@@ -72,7 +72,7 @@ DOWNLOADER_MIDDLEWARES = {
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
 MYEXT_ENABLED = True      # 开启扩展
-IDLE_NUMBER = 120           # 配置空闲持续时间单位为 360个 ，一个时间单位为5s
+IDLE_NUMBER = 12           # 配置空闲持续时间单位为 360个 ，一个时间单位为5s
 
 # 在 EXTENSIONS 配置，激活扩展
 EXTENSIONS = {

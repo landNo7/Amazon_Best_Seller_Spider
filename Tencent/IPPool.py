@@ -55,3 +55,9 @@ def rem_ip():
     i = str(r.rpop('Iplist'), encoding='utf-8')
     return i
 
+
+def push_url(keyword, url):
+    try:
+        r.lpush(keyword, url)
+    except:
+        print("添加url失败")
